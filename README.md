@@ -43,7 +43,7 @@ Use the arrow keys to move, Enter or Space to change a value, and Escape to clos
 and number settings open an input screen. Changes are applied and saved immediately. Any arguments
 to the settings command are ignored, so it always opens the same menu.
 
-Settings live in `~/.pi/agent/<package>.json`.
+Settings keep their existing host-specific filenames, such as `~/.pi/agent/pi-tmux.json`, so upgrading from the old package names preserves the current configuration.
 
 ## Title generation
 
