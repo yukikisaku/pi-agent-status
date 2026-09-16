@@ -109,9 +109,11 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
       {
         key: "naming-model",
         type: "string",
-        get: () => settings.naming.model || "(current session model)",
+        allowEmpty: true,
+        emptyValueLabel: "(current session model)",
+        get: () => settings.naming.model,
         set: (value) => {
-          settings.naming.model = value === "-" ? "" : value;
+          settings.naming.model = value;
         },
       },
     ],

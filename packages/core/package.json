@@ -1,6 +1,6 @@
 {
   "name": "@pi-agent-status/core",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "private": true,
   "type": "module",
   "description": "Shared spinner, completion alert, and title naming logic for the pi-agent-status extensions",

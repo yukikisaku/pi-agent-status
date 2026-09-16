@@ -1,6 +1,6 @@
 {
   "name": "pi-tmux",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "description": "tmux window spinner, completion bell mark, and AI-generated session titles for the Pi coding agent",
   "keywords": [
@@ -43,6 +43,7 @@
   ],
   "peerDependencies": {
     "@earendil-works/pi-ai": "^0.83.0",
-    "@earendil-works/pi-coding-agent": "^0.83.0"
+    "@earendil-works/pi-coding-agent": "^0.83.0",
+    "@earendil-works/pi-tui": "^0.83.0"
   }
 }
