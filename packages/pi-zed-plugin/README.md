@@ -1,4 +1,4 @@
-# pi-zed-plugin
+# @yukikisaku/pi-zed-status
 
 Zed terminal status for the [Pi coding agent](https://pi.dev).
 
@@ -10,14 +10,14 @@ Zed terminal status for the [Pi coding agent](https://pi.dev).
 ## Install
 
 ```bash
-pi install npm:pi-zed-plugin
+pi install npm:@yukikisaku/pi-zed-status
 ```
 
 It activates only inside Zed's terminal, which Zed marks with `TERM_PROGRAM=zed` and `ZED_TERM=true`,
 and stays completely inactive anywhere else.
 
 Inside tmux it stands down entirely and leaves the title to a tmux-aware extension such as
-[`pi-tmux`](https://www.npmjs.com/package/pi-tmux). tmux rewrites `TERM_PROGRAM` to `tmux` and can
+[`@yukikisaku/pi-tmux-status`](https://www.npmjs.com/package/@yukikisaku/pi-tmux-status). tmux rewrites `TERM_PROGRAM` to `tmux` and can
 hand down a stale `ZED_TERM` from whichever client started the server, so `$TMUX` always wins.
 
 ## Commands

@@ -1,4 +1,4 @@
-# pi-tmux
+# @yukikisaku/pi-tmux-status
 
 tmux status for the [Pi coding agent](https://pi.dev).
 
@@ -12,7 +12,7 @@ tmux status for the [Pi coding agent](https://pi.dev).
 ## Install
 
 ```bash
-pi install npm:pi-tmux
+pi install npm:@yukikisaku/pi-tmux-status
 ```
 
 It activates only inside tmux (`$TMUX`) and stays completely inactive anywhere else, so it is safe to

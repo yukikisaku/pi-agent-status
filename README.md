@@ -8,10 +8,10 @@ Each host gets its own package, so you install exactly one and it configures its
 
 | Package | Host | Spinner | Completion mark | Sound | AI title |
 | --- | --- | --- | --- | --- | --- |
-| [`pi-tmux`](packages/pi-tmux) | tmux | tmux window name | 🔔 on the window name | bundled sound via `mpv` | ✅ |
-| [`pi-zed-plugin`](packages/pi-zed-plugin) | Zed terminal | terminal tab title | Zed's own notification | Zed's own notification | ✅ |
-| [`pi-orca`](packages/pi-orca) | Orca | built into Orca | 🔔 on the tab title | built into Orca | ✅ |
-| [`pi-herdr`](packages/pi-herdr) | Herdr | tab label | 🔔 on the tab label | built into Herdr | ✅ |
+| [`@yukikisaku/pi-tmux-status`](packages/pi-tmux) | tmux | tmux window name | 🔔 on the window name | bundled sound via `mpv` | ✅ |
+| [`@yukikisaku/pi-zed-status`](packages/pi-zed-plugin) | Zed terminal | terminal tab title | Zed's own notification | Zed's own notification | ✅ |
+| [`@yukikisaku/pi-orca-status`](packages/pi-orca) | Orca | built into Orca | 🔔 on the tab title | built into Orca | ✅ |
+| [`@yukikisaku/pi-herdr-status`](packages/pi-herdr) | Herdr | tab label | 🔔 on the tab label | built into Herdr | ✅ |
 
 Built-in host behaviour is reused where it fits, and each package adds the remaining status cues
 without replacing it.
@@ -19,10 +19,10 @@ without replacing it.
 ## Install
 
 ```bash
-pi install npm:pi-tmux
-pi install npm:pi-zed-plugin
-pi install npm:pi-orca
-pi install npm:pi-herdr
+pi install npm:@yukikisaku/pi-tmux-status
+pi install npm:@yukikisaku/pi-zed-status
+pi install npm:@yukikisaku/pi-orca-status
+pi install npm:@yukikisaku/pi-herdr-status
 ```
 
 Every package detects its host from the environment and stays completely inactive elsewhere, so
@@ -30,7 +30,7 @@ installing several of them at once is safe.
 
 ## Commands
 
-Each package registers `/rename` plus an interactive settings command named after the package:
+Each package registers `/rename` plus a host-specific interactive settings command:
 
 ```
 /rename                     regenerate the title from the whole conversation

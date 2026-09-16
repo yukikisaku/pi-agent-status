@@ -1,6 +1,6 @@
 {
-  "name": "pi-tmux",
-  "version": "0.1.2",
+  "name": "@yukikisaku/pi-tmux-status",
+  "version": "0.1.0",
   "type": "module",
   "description": "tmux window spinner, completion bell mark, and AI-generated session titles for the Pi coding agent",
   "keywords": [

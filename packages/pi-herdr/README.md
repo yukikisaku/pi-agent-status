@@ -1,4 +1,4 @@
-# pi-herdr
+# @yukikisaku/pi-herdr-status
 
 Herdr tab status for the [Pi coding agent](https://pi.dev).
 
@@ -15,7 +15,7 @@ Herdr already plays its own completion sound, so this extension does not add one
 ## Install
 
 ```bash
-pi install npm:pi-herdr
+pi install npm:@yukikisaku/pi-herdr-status
 ```
 
 It activates only inside Herdr (`HERDR_ENV=1`) and stays completely inactive anywhere else, so it is

@@ -1,6 +1,6 @@
 {
-  "name": "pi-zed-plugin",
-  "version": "0.1.2",
+  "name": "@yukikisaku/pi-zed-status",
+  "version": "0.1.0",
   "type": "module",
   "description": "Zed terminal tab spinner, completion bell, and AI-generated session titles for the Pi coding agent",
   "keywords": [

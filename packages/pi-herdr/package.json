@@ -1,6 +1,6 @@
 {
-  "name": "pi-herdr",
-  "version": "0.1.2",
+  "name": "@yukikisaku/pi-herdr-status",
+  "version": "0.1.0",
   "type": "module",
   "description": "Herdr tab spinner, completion mark, and AI-generated tab labels for the Pi coding agent",
   "keywords": [

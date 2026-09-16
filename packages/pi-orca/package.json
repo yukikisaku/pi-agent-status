@@ -1,6 +1,6 @@
 {
-  "name": "pi-orca",
-  "version": "0.1.2",
+  "name": "@yukikisaku/pi-orca-status",
+  "version": "0.1.0",
   "type": "module",
   "description": "Orca completion marks and AI-generated tab titles for the Pi coding agent",
   "keywords": [

@@ -1,4 +1,4 @@
-# pi-orca
+# @yukikisaku/pi-orca-status
 
 Completion marks and AI-generated Orca tab titles for the [Pi coding agent](https://pi.dev).
 
@@ -12,7 +12,7 @@ No extra completion sound is played.
 ## Install
 
 ```bash
-pi install npm:pi-orca
+pi install npm:@yukikisaku/pi-orca-status
 ```
 
 It activates only inside Orca (`ORCA_PANE_KEY`) and stays completely inactive anywhere else.
