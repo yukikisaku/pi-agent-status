@@ -142,7 +142,7 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
   pi.on("before_agent_start", async (event, ctx: ExtensionContext) => {
     if (!isMainAgentSession(ctx)) return;
 
-    const firstPrompt = getFirstUserPrompt(ctx.sessionManager.getBranch()) ?? event.prompt;
+    const firstPrompt = getFirstUserPrompt(ctx.sessionManager.getBranch(), event.prompt);
     void title.applyAutoTitle(firstPrompt, ctx);
   });
 

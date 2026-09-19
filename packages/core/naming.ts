@@ -107,16 +107,24 @@ function extractTextFromMessageContent(content: unknown): string {
     .trim();
 }
 
-export function getFirstUserPrompt(entries: SessionEntry[]): string | undefined {
+function normalizeUserPrompt(text: string): string | undefined {
+  const prompt = text.replace(/^(?:<skill\b[^>]*>[\s\S]*?<\/skill>\s*)+/, "").trim();
+  return prompt || undefined;
+}
+
+export function getFirstUserPrompt(
+  entries: SessionEntry[],
+  fallback?: string,
+): string | undefined {
   for (const entry of entries) {
     if (entry.type !== "message") continue;
     if (entry.message.role !== "user") continue;
 
-    const text = extractTextFromMessageContent(entry.message.content);
-    if (text) return text;
+    const prompt = normalizeUserPrompt(extractTextFromMessageContent(entry.message.content));
+    if (prompt) return prompt;
   }
 
-  return undefined;
+  return normalizeUserPrompt(fallback ?? "");
 }
 
 export function buildConversationNamingSource(entries: SessionEntry[]): string | undefined {
