@@ -5,6 +5,7 @@ import {
   compactTitle,
   describeRenameFailure,
   generateTitle,
+  getFirstUserPrompt,
   normalizeThinkingLevel,
   parseGeneratedTitle,
   sanitizeTitle,
@@ -58,6 +59,18 @@ test("a title over the limit is truncated", () => {
 
 test("a title that sanitizes to nothing is undefined", () => {
   assert.equal(compactTitle('  "" \n '), undefined);
+});
+
+test("leading expanded skills are excluded from the first prompt", () => {
+  const prompt = `<skill name="example">
+Follow the skill instructions.
+</skill>
+
+Deploy blue widgets`;
+  const entries = [{ type: "message", message: { role: "user", content: prompt } }] as never;
+
+  assert.equal(getFirstUserPrompt(entries), "Deploy blue widgets");
+  assert.equal(getFirstUserPrompt([], prompt), "Deploy blue widgets");
 });
 
 test("an extension-registered provider streams the title itself", async () => {
