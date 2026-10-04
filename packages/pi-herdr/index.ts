@@ -11,6 +11,7 @@ import {
   setTerminalTitle,
   SPINNER_SPEEDS,
   SPINNER_STYLES,
+  stripSpinnerFrames,
 } from "./core/index.ts";
 import { createHerdrClient } from "./herdr-client.ts";
 import { loadSettings, saveSettings, type PiHerdrSettings } from "./settings.ts";
@@ -26,7 +27,22 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
   const stopSpinner = async (): Promise<void> => {
     const stopping = spinner?.stop();
     spinner = null;
-    if (stopping) await stopping;
+    try {
+      if (stopping) await stopping;
+    } catch {
+      // Cleanup is best effort; a failed strip must not break the event chain.
+    }
+  };
+
+  // A killed or interrupted run can leave its spinner frame in the tab label
+  // with no in-memory state surviving to remove it, so reconcile against the
+  // real label instead of trusting the spinner object alone.
+  const scrubStaleSpinnerPrefix = async (): Promise<void> => {
+    const current = await herdr.getName(tabId);
+    const scrubbed = stripSpinnerFrames(current);
+    if (scrubbed !== current) {
+      await herdr.setName(tabId, scrubbed);
+    }
   };
 
   const title = createTitleController({
@@ -136,6 +152,7 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
     title.reset();
     settings = loadSettings();
     await herdr.refresh(tabId);
+    await scrubStaleSpinnerPrefix();
     await title.restoreExistingTitle(ctx);
   });
 
@@ -151,6 +168,7 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
 
     await stopSpinner();
     await herdr.refresh(tabId);
+    await scrubStaleSpinnerPrefix();
 
     const alert = createCompletionAlert(herdr, {
       enabled: settings.completionAlert.enabled,

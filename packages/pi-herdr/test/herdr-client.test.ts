@@ -99,3 +99,56 @@ test("an unreachable socket degrades to empty values instead of throwing", async
   assert.equal(await client.setName("w9:t2", "anything"), false);
   assert.equal(await client.isTargetVisible("w9:t2"), true);
 });
+
+test("a failed rename invalidates the cached label", async () => {
+  let label = "⠋ Stale frame";
+  let failRename = true;
+  const methods: string[] = [];
+
+  await withFakeHerdr(
+    (method, params) => {
+      methods.push(method);
+      if (method === "tab.rename") {
+        // Simulate a rename whose response never reaches the client.
+        if (failRename) return undefined;
+        label = params.label as string;
+      }
+      return { type: "tab_info", tab: { tab_id: "w9:t2", label, focused: true } };
+    },
+    async (env) => {
+      const client = createHerdrClient(env);
+
+      assert.equal(await client.getName("w9:t2"), "⠋ Stale frame");
+      assert.equal(await client.setName("w9:t2", "Stale frame"), false);
+
+      failRename = false;
+      // The next read must refetch from the daemon, not serve the stale cache.
+      assert.equal(await client.getName("w9:t2"), "⠋ Stale frame");
+      assert.deepEqual(methods, ["tab.get", "tab.rename", "tab.get"]);
+    },
+  );
+});
+
+test("a failed fetch is not cached as an empty label", async () => {
+  const label = "Real title";
+  let failNextGet = true;
+  const methods: string[] = [];
+
+  await withFakeHerdr(
+    (method) => {
+      methods.push(method);
+      if (method === "tab.get" && failNextGet) {
+        failNextGet = false;
+        return undefined;
+      }
+      return { type: "tab_info", tab: { tab_id: "w9:t2", label, focused: true } };
+    },
+    async (env) => {
+      const client = createHerdrClient(env);
+
+      assert.equal(await client.getName("w9:t2"), "");
+      assert.equal(await client.getName("w9:t2"), "Real title");
+      assert.deepEqual(methods, ["tab.get", "tab.get"]);
+    },
+  );
+});

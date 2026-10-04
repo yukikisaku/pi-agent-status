@@ -85,7 +85,10 @@ export function createHerdrClient(env: NodeJS.ProcessEnv = process.env): HerdrCl
     async getName(target: string): Promise<string> {
       if (cachedLabel !== undefined) return cachedLabel;
       const tab = await fetchTab(target);
-      cachedLabel = tab?.label ?? "";
+      // Do not cache failures: a transient error must not masquerade as an
+      // empty label, or the next spinner tick would paint over the real one.
+      if (!tab) return "";
+      cachedLabel = tab.label;
       return cachedLabel;
     },
 
@@ -93,7 +96,12 @@ export function createHerdrClient(env: NodeJS.ProcessEnv = process.env): HerdrCl
       const result = (await sendRequest(endpoint!, "tab.rename", { tab_id: target, label })) as
         | { tab?: HerdrTab }
         | undefined;
-      if (!result?.tab) return false;
+      if (!result?.tab) {
+        // The daemon state is unknown now; force the next read to refetch
+        // instead of serving a label that may no longer match.
+        cachedLabel = undefined;
+        return false;
+      }
 
       cachedLabel = result.tab.label;
       return true;
