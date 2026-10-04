@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "reviewerLogin": "yukikisaku",
+  "reviewerId": 167408667,
+  "baseBranch": "main",
+  "ciWorkflow": ".github/workflows/ci.yml",
+  "requiredJobs": [
+    "package",
+    "merge-policy"
+  ]
+}

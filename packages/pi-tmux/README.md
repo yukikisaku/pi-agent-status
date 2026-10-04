@@ -46,3 +46,7 @@ clear the field to go back to the session model.
 ## License
 
 MIT
+
+## Pull requests
+
+Pull requests are handled in the [pi-agent-status repository](https://github.com/yukikisaku/pi-agent-status#pull-requests), which defines the AI review and automatic merge policy and activation conditions.
