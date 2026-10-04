@@ -59,6 +59,14 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
 
       return normalized;
     },
+    // Renames that happen outside this extension (pi /name, Oh My Pi's builtin
+    // /rename) already own the session name; mirror them onto the tab without
+    // writing back. Returning undefined when Herdr is unreachable lets the
+    // watcher retry on its next tick.
+    async pushTabTitle(normalizedTitle) {
+      setTerminalTitle(normalizedTitle);
+      return (await herdr.setName(tabId, normalizedTitle)) ? normalizedTitle : undefined;
+    },
   });
 
   const settingsCommand = createSettingsCommand({
@@ -145,6 +153,14 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
     handler: settingsCommand,
   });
 
+  // Plain Pi announces every session rename (/name, other extensions) through
+  // this event; Oh My Pi exposes no rename event, so there the session-name
+  // watcher started below is what keeps the tab in sync.
+  pi.on("session_info_changed", async (event, ctx) => {
+    if (!isMainAgentSession(ctx)) return;
+    await title.applyExternalTitle(event.name, ctx);
+  });
+
   pi.on("session_start", async (_event, ctx) => {
     if (!isMainAgentSession(ctx)) return;
 
@@ -154,6 +170,7 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
     await herdr.refresh(tabId);
     await scrubStaleSpinnerPrefix();
     await title.restoreExistingTitle(ctx);
+    title.startSessionNameWatch(ctx);
   });
 
   pi.on("before_agent_start", async (event, ctx: ExtensionContext) => {
@@ -203,6 +220,7 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
 
   pi.on("session_shutdown", async (_event, ctx) => {
     if (!isMainAgentSession(ctx)) return;
+    title.stopSessionNameWatch();
     await stopSpinner();
   });
 }
