@@ -51,4 +51,4 @@ MIT
 
 ## Pull requests
 
-Pull requests are handled in the [pi-agent-status repository](https://github.com/yukikisaku/pi-agent-status#pull-requests), which defines the AI review and automatic merge policy and activation conditions.
+Pull requests are reviewed by AI and automatically merged when the review and CI pass.
