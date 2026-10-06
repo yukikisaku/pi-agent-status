@@ -18,11 +18,11 @@
   ],
   "license": "MIT",
   "author": "yuki-kisaku",
-  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-zed-plugin",
+  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-zed-status",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yukikisaku/pi-agent-status.git",
-    "directory": "packages/pi-zed-plugin"
+    "directory": "packages/pi-zed-status"
   },
   "engines": {
     "node": ">=20"

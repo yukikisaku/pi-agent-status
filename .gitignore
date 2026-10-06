@@ -6,7 +6,4 @@ node_modules/
 packages/*/LICENSE
 
 # Copied from packages/core at build/publish time.
-packages/pi-tmux/core/
-packages/pi-zed-plugin/core/
-packages/pi-orca/core/
-packages/pi-herdr/core/
+packages/*/core/

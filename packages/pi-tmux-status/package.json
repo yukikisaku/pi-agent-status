@@ -17,11 +17,11 @@
   ],
   "license": "MIT",
   "author": "yuki-kisaku",
-  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-tmux",
+  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-tmux-status",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yukikisaku/pi-agent-status.git",
-    "directory": "packages/pi-tmux"
+    "directory": "packages/pi-tmux-status"
   },
   "engines": {
     "node": ">=20"

@@ -19,11 +19,11 @@
   ],
   "license": "MIT",
   "author": "yuki-kisaku",
-  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-orca",
+  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-orca-status",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yukikisaku/pi-agent-status.git",
-    "directory": "packages/pi-orca"
+    "directory": "packages/pi-orca-status"
   },
   "engines": {
     "node": ">=20"

@@ -17,11 +17,11 @@
   ],
   "license": "MIT",
   "author": "yuki-kisaku",
-  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-herdr",
+  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-herdr-status",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yukikisaku/pi-agent-status.git",
-    "directory": "packages/pi-herdr"
+    "directory": "packages/pi-herdr-status"
   },
   "engines": {
     "node": ">=20"
