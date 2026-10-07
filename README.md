@@ -8,10 +8,10 @@ Each host gets its own package, so you install exactly one and it configures its
 
 | Package | Host | Spinner | Completion mark | Sound | AI title |
 | --- | --- | --- | --- | --- | --- |
-| [`@yukikisaku/pi-tmux-status`](packages/pi-tmux) | tmux | tmux window name | 🔔 on the window name | bundled sound via `mpv` | ✅ |
-| [`@yukikisaku/pi-zed-status`](packages/pi-zed-plugin) | Zed terminal | terminal tab title | Zed's own notification | Zed's own notification | ✅ |
-| [`@yukikisaku/pi-orca-status`](packages/pi-orca) | Orca | built into Orca | 🔔 on the tab title | built into Orca | ✅ |
-| [`@yukikisaku/pi-herdr-status`](packages/pi-herdr) | Herdr | tab label | 🔔 on the tab label | built into Herdr | ✅ |
+| [`@yukikisaku/pi-tmux-status`](packages/pi-tmux-status) | tmux | tmux window name | 🔔 on the window name | bundled sound via `mpv` | ✅ |
+| [`@yukikisaku/pi-zed-status`](packages/pi-zed-status) | Zed terminal | terminal tab title | Zed's own notification | Zed's own notification | ✅ |
+| [`@yukikisaku/pi-orca-status`](packages/pi-orca-status) | Orca | built into Orca | 🔔 on the tab title | built into Orca | ✅ |
+| [`@yukikisaku/pi-herdr-status`](packages/pi-herdr-status) | Herdr | tab label | 🔔 on the tab label | built into Herdr | ✅ |
 
 Built-in host behaviour is reused where it fits, and each package adds the remaining status cues
 without replacing it.

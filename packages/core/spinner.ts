@@ -43,6 +43,30 @@ export function stripSpinnerPrefix(name: string, frame: string | null): string {
   return name.startsWith(prefix) ? name.slice(prefix.length) : name;
 }
 
+/**
+ * Styles made of plain ASCII ("-", "\", ...). A real title can start with
+ * those glyphs, so they are only stripped when the style is known to be the
+ * one that produced the prefix.
+ */
+const AMBIGUOUS_STYLES = new Set(["classic"]);
+
+const UNAMBIGUOUS_STYLE_NAMES = Object.keys(SPINNER_STYLES).filter((style) => !AMBIGUOUS_STYLES.has(style));
+
+/**
+ * Strip leading "<frame> " decorations for the given styles, repeating until
+ * none match so stacked duplicates left by a failed cleanup are removed too.
+ * Defaults to styles whose glyphs cannot be mistaken for real title text.
+ */
+export function stripSpinnerFrames(name: string, styles: readonly string[] = UNAMBIGUOUS_STYLE_NAMES): string {
+  const frames = styles.flatMap((style) => SPINNER_STYLES[style] ?? []);
+  let current = name;
+  for (;;) {
+    const frame = frames.find((candidate) => current.startsWith(`${candidate} `));
+    if (!frame) return current;
+    current = current.slice(frame.length + 1);
+  }
+}
+
 export function createTitleSpinner(runtime: TitleSpinnerRuntime, config: SpinnerConfig) {
   let timer: ReturnType<typeof setTimeout> | null = null;
   let frameIndex = 0;
@@ -70,7 +94,9 @@ export function createTitleSpinner(runtime: TitleSpinnerRuntime, config: Spinner
     const current = await runtime.getTitle(targetId);
     if (!running || activeTargetId !== targetId) return;
 
-    const base = stripSpinnerPrefix(current, lastFrame);
+    // On the first tick there is no remembered frame, so any decoration still
+    // present is stale (e.g. left by a killed run): strip it before painting.
+    const base = lastFrame ? stripSpinnerPrefix(current, lastFrame) : stripSpinnerFrames(current);
     await runtime.setTitle(targetId, `${frame} ${base}`);
     lastFrame = frame;
 
@@ -106,8 +132,21 @@ export function createTitleSpinner(runtime: TitleSpinnerRuntime, config: Spinner
     lastFrame = null;
 
     if (!targetId || !frameToStrip) return;
-    const current = await runtime.getTitle(targetId);
-    await runtime.setTitle(targetId, stripSpinnerPrefix(current, frameToStrip));
+
+    // Cleanup is best effort: a lost rename must not reject the caller's event
+    // chain, and a desynced remembered frame must not leave decorations behind.
+    try {
+      const current = await runtime.getTitle(targetId);
+      const restored = stripSpinnerFrames(stripSpinnerPrefix(current, frameToStrip), [
+        config.style,
+        ...UNAMBIGUOUS_STYLE_NAMES,
+      ]);
+      if (restored !== current) {
+        await runtime.setTitle(targetId, restored);
+      }
+    } catch {
+      // The next agent_start reconciles against the real title.
+    }
   };
 
   return {

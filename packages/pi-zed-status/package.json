@@ -1,29 +1,28 @@
 {
-  "name": "@yukikisaku/pi-orca-status",
-  "version": "0.1.0",
+  "name": "@yukikisaku/pi-zed-status",
+  "version": "0.2.0",
   "type": "module",
-  "description": "Orca completion marks and AI-generated tab titles for the Pi coding agent",
+  "description": "Zed terminal tab spinner, completion bell, and AI-generated session titles for the Pi coding agent",
   "keywords": [
     "pi-package",
     "pi",
     "pi-coding-agent",
     "pi-extension",
-    "orca",
+    "zed",
+    "zed-editor",
+    "spinner",
     "notification",
-    "completion",
-    "title",
-    "rename",
     "status",
     "terminal",
     "ai"
   ],
   "license": "MIT",
   "author": "yuki-kisaku",
-  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-orca",
+  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-zed-status",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yukikisaku/pi-agent-status.git",
-    "directory": "packages/pi-orca"
+    "directory": "packages/pi-zed-status"
   },
   "engines": {
     "node": ">=20"
@@ -35,7 +34,6 @@
   },
   "files": [
     "index.ts",
-    "orca-runtime.ts",
     "settings.ts",
     "core/**/*.ts",
     "README.md",

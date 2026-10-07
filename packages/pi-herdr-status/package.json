@@ -1,6 +1,6 @@
 {
   "name": "@yukikisaku/pi-herdr-status",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Herdr tab spinner, completion mark, and AI-generated tab labels for the Pi coding agent",
   "keywords": [
@@ -17,11 +17,11 @@
   ],
   "license": "MIT",
   "author": "yuki-kisaku",
-  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-herdr",
+  "homepage": "https://github.com/yukikisaku/pi-agent-status/tree/main/packages/pi-herdr-status",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yukikisaku/pi-agent-status.git",
-    "directory": "packages/pi-herdr"
+    "directory": "packages/pi-herdr-status"
   },
   "engines": {
     "node": ">=20"

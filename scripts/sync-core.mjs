@@ -3,7 +3,7 @@ import { dirname, join, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
-export const PUBLISHED_PACKAGES = ["pi-tmux", "pi-zed-plugin", "pi-orca", "pi-herdr"];
+export const PUBLISHED_PACKAGES = ["pi-tmux-status", "pi-zed-status", "pi-orca-status", "pi-herdr-status"];
 
 export function syncCore() {
   const source = join(ROOT, "packages", "core");

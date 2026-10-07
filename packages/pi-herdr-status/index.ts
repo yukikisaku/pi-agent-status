@@ -11,6 +11,7 @@ import {
   setTerminalTitle,
   SPINNER_SPEEDS,
   SPINNER_STYLES,
+  stripSpinnerFrames,
 } from "./core/index.ts";
 import { createHerdrClient } from "./herdr-client.ts";
 import { loadSettings, saveSettings, type PiHerdrSettings } from "./settings.ts";
@@ -26,7 +27,22 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
   const stopSpinner = async (): Promise<void> => {
     const stopping = spinner?.stop();
     spinner = null;
-    if (stopping) await stopping;
+    try {
+      if (stopping) await stopping;
+    } catch {
+      // Cleanup is best effort; a failed strip must not break the event chain.
+    }
+  };
+
+  // A killed or interrupted run can leave its spinner frame in the tab label
+  // with no in-memory state surviving to remove it, so reconcile against the
+  // real label instead of trusting the spinner object alone.
+  const scrubStaleSpinnerPrefix = async (): Promise<void> => {
+    const current = await herdr.getName(tabId);
+    const scrubbed = stripSpinnerFrames(current);
+    if (scrubbed !== current) {
+      await herdr.setName(tabId, scrubbed);
+    }
   };
 
   const title = createTitleController({
@@ -42,6 +58,14 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
       await herdr.setName(tabId, normalized);
 
       return normalized;
+    },
+    // Renames that happen outside this extension (pi /name, Oh My Pi's builtin
+    // /rename) already own the session name; mirror them onto the tab without
+    // writing back. Returning undefined when Herdr is unreachable lets the
+    // watcher retry on its next tick.
+    async pushTabTitle(normalizedTitle) {
+      setTerminalTitle(normalizedTitle);
+      return (await herdr.setName(tabId, normalizedTitle)) ? normalizedTitle : undefined;
     },
   });
 
@@ -129,6 +153,14 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
     handler: settingsCommand,
   });
 
+  // Plain Pi announces every session rename (/name, other extensions) through
+  // this event; Oh My Pi exposes no rename event, so there the session-name
+  // watcher started below is what keeps the tab in sync.
+  pi.on("session_info_changed", async (event, ctx) => {
+    if (!isMainAgentSession(ctx)) return;
+    await title.applyExternalTitle(event.name, ctx);
+  });
+
   pi.on("session_start", async (_event, ctx) => {
     if (!isMainAgentSession(ctx)) return;
 
@@ -136,7 +168,9 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
     title.reset();
     settings = loadSettings();
     await herdr.refresh(tabId);
+    await scrubStaleSpinnerPrefix();
     await title.restoreExistingTitle(ctx);
+    title.startSessionNameWatch(ctx);
   });
 
   pi.on("before_agent_start", async (event, ctx: ExtensionContext) => {
@@ -151,6 +185,7 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
 
     await stopSpinner();
     await herdr.refresh(tabId);
+    await scrubStaleSpinnerPrefix();
 
     const alert = createCompletionAlert(herdr, {
       enabled: settings.completionAlert.enabled,
@@ -185,6 +220,7 @@ export default function piHerdrExtension(pi: ExtensionAPI) {
 
   pi.on("session_shutdown", async (_event, ctx) => {
     if (!isMainAgentSession(ctx)) return;
+    title.stopSessionNameWatch();
     await stopSpinner();
   });
 }
