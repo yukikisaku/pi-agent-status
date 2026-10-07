@@ -45,6 +45,19 @@ export default function piOrcaExtension(pi: ExtensionAPI) {
 
       return normalized;
     },
+    // External renames (pi /name, Oh My Pi's builtin /rename) already own the
+    // session name; mirror them onto the tab without writing back. A failed CLI
+    // rename falls back to the OSC title when UI exists; without UI the push
+    // stays unclaimed so the watcher retries on its next tick.
+    async pushTabTitle(normalizedTitle, ctx) {
+      if (await renameOrcaTab(normalizedTitle)) return normalizedTitle;
+
+      if (ctx.hasUI) {
+        applyFallbackTabTitle(ctx, normalizedTitle);
+        return normalizedTitle;
+      }
+      return undefined;
+    },
   });
 
   const settingsCommand = createSettingsCommand({
@@ -106,6 +119,14 @@ export default function piOrcaExtension(pi: ExtensionAPI) {
     handler: settingsCommand,
   });
 
+  // Plain Pi announces every session rename (/name, other extensions) through
+  // this event; Oh My Pi exposes no rename event, so there the session-name
+  // watcher started below is what keeps the tab title in sync.
+  pi.on("session_info_changed", async (event, ctx) => {
+    if (!isMainAgentSession(ctx)) return;
+    await title.applyExternalTitle(event.name, ctx);
+  });
+
   pi.on("session_start", async (_event, ctx) => {
     if (!isMainAgentSession(ctx)) return;
 
@@ -113,6 +134,7 @@ export default function piOrcaExtension(pi: ExtensionAPI) {
     settings = loadSettings();
     orca.refresh();
     await title.restoreExistingTitle(ctx);
+    title.startSessionNameWatch(ctx);
   });
 
   pi.on("before_agent_start", async (event, ctx: ExtensionContext) => {
@@ -149,5 +171,10 @@ export default function piOrcaExtension(pi: ExtensionAPI) {
       ringBell: () => {},
     });
     await alert.notifyAgentEnd(terminalHandle);
+  });
+
+  pi.on("session_shutdown", async (_event, ctx) => {
+    if (!isMainAgentSession(ctx)) return;
+    title.stopSessionNameWatch();
   });
 }
