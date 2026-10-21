@@ -27,7 +27,7 @@ type OrcaTerminal = {
   handle?: string;
   worktreeId?: string;
   tabId?: string;
-  title?: string;
+  title?: string | null;
 };
 
 type OrcaVisualLayout = {
@@ -122,14 +122,29 @@ function findTerminal(snapshot: TerminalSnapshot | undefined, target: string) {
   return snapshot?.terminals.find((terminal) => terminal.handle === target);
 }
 
+function findVisualTerminal(value: unknown, target: string): Record<string, unknown> | undefined {
+  if (!value || typeof value !== "object") return undefined;
+  const node = value as Record<string, unknown>;
+  if (node.type === "terminal" && node.handle === target) return node;
+  for (const child of Object.values(node)) {
+    const terminal = findVisualTerminal(child, target);
+    if (terminal) return terminal;
+  }
+  return undefined;
+}
+
 function findTabName(snapshot: TerminalSnapshot | undefined, target: string): string | undefined {
   const terminal = findTerminal(snapshot, target);
-  if (!terminal?.tabId || !terminal.worktreeId) return undefined;
-
+  if (!terminal) return undefined;
   const layout = snapshot?.visualLayouts.find(
     (candidate) => candidate.worktreeId === terminal.worktreeId,
   );
-  const title = findVisualTab(layout?.root, terminal.tabId)?.title;
+  const tab = terminal.tabId ? findVisualTab(layout?.root, terminal.tabId) : undefined;
+  // Legacy layouts expose the stable name on the tab, not the working OSC title.
+  if (tab && !("panes" in tab) && typeof tab.title === "string") return tab.title;
+  // Modern Orca renames a terminal pane; its outer tab can stay "Terminal".
+  if (typeof terminal.title === "string") return terminal.title;
+  const title = findVisualTerminal(tab?.panes, target)?.title;
   return typeof title === "string" ? title : undefined;
 }
 
@@ -223,12 +238,15 @@ export function createOrcaRuntime(
       lastKnownNames.set(target, name);
       const snapshot = cachedSnapshot?.value;
       const terminal = findTerminal(snapshot, target);
+      if (terminal) terminal.title = name;
       if (terminal?.tabId && terminal.worktreeId) {
         const layout = snapshot?.visualLayouts.find(
           (candidate) => candidate.worktreeId === terminal.worktreeId,
         );
         const tab = findVisualTab(layout?.root, terminal.tabId);
-        if (tab) tab.title = name;
+        const pane = findVisualTerminal(tab?.panes, target);
+        if (pane) pane.title = name;
+        else if (tab && !("panes" in tab)) tab.title = name;
       }
       return true;
     },

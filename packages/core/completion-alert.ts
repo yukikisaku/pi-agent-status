@@ -147,7 +147,9 @@ export function createCompletionAlert(runtime: AlertRuntime, options: Completion
       }
 
       const current = await runtime.getName(targetId);
-      await runtime.setName(targetId, addCompletionMark(current, options.mark));
+      // A failed lookup must not replace an unknown title with just the mark.
+      if (!current.trim()) return;
+      if (!(await runtime.setName(targetId, addCompletionMark(current, options.mark)))) return;
 
       const autoClearMs = options.focusedMarkAutoClearMs ?? 0;
       if (targetVisible && appFocused) {
